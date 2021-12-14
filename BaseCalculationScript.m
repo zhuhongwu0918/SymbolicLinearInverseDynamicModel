@@ -1,4 +1,5 @@
 %%
+%ref:M. Gautier, "Numerical calculation of the base inertial parameters of robots," Journal of Robotic Systems, vol. 8, pp. 485-506, 1991.
 clc
 clear
 close all
@@ -39,7 +40,7 @@ n_dynparms = size(dynparms,1);
 [~,R1_diag] = qr(Z);
 R1_diag = diag(R1_diag);
 R1_diag = round(R1_diag,5);%可以使用精度阈值 size(Z,2)*max(R1_diag)*ksi,ksi是machine precision.
-% R1_diag = numpy.linalg.qr(Z, mode='economic').diagonal().round(round)
+
 dbi=[];
 ddi=[];
 for i = 1:length(R1_diag)
