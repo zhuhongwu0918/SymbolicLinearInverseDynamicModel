@@ -4,13 +4,13 @@ close all
 
 %计算基座以后的情况
 %齐次变换矩阵from j to i,Z-Y-X(alpha, beta, gamma)
-syms alpha beta gamma dalpha dbeta dgamma px py pz  ddpx ddpy ddpz real
+syms alpha beta gamma dalpha dbeta dgamma px0 py0 pz0  ddpx0 ddpy0 ddpz0 real
 syms g real;
 g_vec = [0 0 -g]';% 线加速度，以世界坐标为准
 R_w_0 = [cos(alpha)*cos(beta),cos(alpha)*sin(beta)*sin(gamma)-sin(alpha)*cos(gamma),cos(alpha)*sin(beta)*cos(gamma)+sin(alpha)*sin(gamma);...
     sin(alpha)*cos(beta),sin(alpha)*sin(beta)*sin(gamma)+cos(alpha)*cos(gamma),sin(alpha)*sin(beta)*cos(gamma)-cos(alpha)*cos(gamma);...
     -sin(beta),cos(beta)*sin(gamma),cos(beta)*cos(gamma)];
-p_w_0 = [px py pz]';
+p_w_0 = [px0 py0 pz0]';
 T_w_0 = [cell2sym([sym2cell(R_w_0),sym2cell(p_w_0)]);0, 0, 0,1];
 
 z_w_0_w = eye(3,3);
@@ -27,7 +27,7 @@ dw_0 = [ddalpha ddbeta ddgamma]';
 w_0   = R_w_0*w_w + z_w_0_w*w_0;%公式1
 dw_0  = R_w_0*dw_w + cross(R_w_0*w_w,z_w_0_w*w_0) + z_w_0_w*dw_0;
 %仅使用于旋转关节
-dv_0 = [ddpx ddpy ddpz]' + dv_w;
+dv_0 = [ddpx0 ddpy0 ddpz0]' + dv_w;
 
 %计算基座以后的情况
 syms q1 q2 L1 L2 real
@@ -141,27 +141,40 @@ for i = 1 : rows-1
     end
 end
 %%
-%构造底座单连杆的U矩阵
+%构造底座加单连杆的U矩阵
 U_0_0 = A_0;
 U_0_1 = T_0*T_i(:,:,1)*A_0;
-%构造底座单连杆的完整Y矩阵
+%构造底座加单连杆的完整Y矩阵
 w0 = [U_0_0,U_0_1]*[Phibase;Phi(:,:,1)];
 w1 = [zeros(6,10),U(:,:,1,1)]*[Phibase;Phi(:,:,1)];
 Y_one = [U_0_0,U_0_1;zeros(6,10),U(:,:,1,1)];
 w = [w0;w1];
 isequal(Y_one*[Phibase;Phi(:,:,1)],w)
 % K_one = [z_w_0'*U_0_0,z'*U_0_1;z'*zeros(6,10),z'*U(:,:,1,1)];
-
+%%
+%按照测量方式向某自由度投影
 for i = 1:size(U,3)
     for j = 1:size(U,4)
         K_tau(:,:,i,j) = z(:,:,i)' * U(:,:,i,j);
     end
 end
+K_tau_w_0 = [U_0_0,U_0_1];
 
 K_tau_2d=cell(size(K_tau,3),size(K_tau,4));
-for i = 1:size(K_tau,3)
-     for j = 1:size(K_tau,4)
-    K_tau_2d{i,j} =  K_tau(:,:,i,j);
-     end
-end
+K_tau_2d{1,1} = U_0_0;
+K_tau_2d{1,2} = U_0_1;
+K_tau_2d{2,1} = zeros(size(z(:,:,1)'*U_0_0));
+K_tau_2d{2,2} = K_tau(:,:,1,1);
 K_tau_2d = cell2sym(K_tau_2d);
+%first 6 row is the base link, the last row is the first link.
+%%
+%赋值测试
+ddpx0 = 2;ddpy0 = 0;ddpz0 = 0;
+alpha=0; beta=0;   gamma=0; 
+dalpha=0; dbeta=0;   dgamma=0; 
+ddalpha=0; ddbeta=0;   ddgamma=0; 
+q1=0.5*pi;dq1=0;ddq1=0;
+px0 =1;py0=1;pz0=1;%基座距离世界坐标的位置
+eval(K_tau_2d)
+ans=thresholdsetzero(ans,1e-3);
+ans*[Phibase;Phi(:,:,1)]
