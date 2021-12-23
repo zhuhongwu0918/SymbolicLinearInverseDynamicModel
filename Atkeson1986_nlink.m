@@ -7,7 +7,7 @@ syms q1 q2 L1 L2 real
 %              0, L1,0, 0;];%单连杆模型
 dh_params = [0, 0, 0, q1;
              0, L1,0, q2;
-             0, L2,0, 0];%双连杆模型
+             0, L2,0, 0];%双连杆模型，建至末端，特别是直线连杆
 
 [rows,~] = size(dh_params);
 for i = 1:rows-1% 1     2  
