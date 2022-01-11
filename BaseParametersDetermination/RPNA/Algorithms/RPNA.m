@@ -24,8 +24,9 @@ function [N, M, V , C] = RPNA(model, free_base)
     V_J = EmptyCells;  
     
     % Main algorithm loop
-    for i =1:model.NB
-        [~, Si] = jcalc( model.jtype{i}, 0 );
+    for i =1:model.NB%从第i个刚体开始
+        [~, Si] = jcalc( model.jtype{i}, 0 );%joint type，关节类型，Rz,Pz
+        %返回旋转矩阵和关节自由度向量Si
         n_i = size(Si, 2);
         
         p = model.parent(i);
@@ -53,15 +54,16 @@ function [N, M, V , C] = RPNA(model, free_base)
         paramRateSet     = cell( n_i, 1);
         for k= 1:size(Si,2)
             % Velocity rates of change with joint angle
-            crmSet{k} = crm(Si(:,k) );
+            crmSet{k} = crm(Si(:,k) );%叉乘操作，6*6
             
             % Inertail parameters rates of change
             paramRateSet{k} = Rate_Parameters( Si(:,k) );
+            %将自由度向量进行转换Rate_Parameters？？？原文中有描述
         end
         
-        % Propagate the velocity across a joint
+        % Propagate the velocity across a joint  与算法中第4行对应
         V{i} = RangeBasis([ SwitchedControllabilityMatrix( crmSet , V_J{i} ) Si]); 
-        
+        %RangeBasis给出一个与输入列跨度相同的满秩矩阵
         O{i} = SwitchedObservabilityMatrix(Cp*Transform_Parameters( model.Xtree{i} ), paramRateSet );
         N{i} = OutputMatrix(V{i},Si);
         for k = 1:n_i

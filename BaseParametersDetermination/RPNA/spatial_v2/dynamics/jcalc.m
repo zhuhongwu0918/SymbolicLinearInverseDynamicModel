@@ -24,8 +24,8 @@ switch code
     Xj = roty(q);
     S = [0;1;0;0;0;0];
   case {'R','Rz'}			% revolute Z axis
-    Xj = rotz(q);
-    S = [0;0;1;0;0;0];
+    Xj = rotz(q);%绕z轴旋转
+    S = [0;0;1;0;0;0];%关节自由度
   case 'Px'				% prismatic X axis
     Xj = xlt([q 0 0]);
     S = [0;0;0;1;0;0];

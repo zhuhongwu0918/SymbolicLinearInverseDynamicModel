@@ -22,13 +22,13 @@ function [A, cA] = RangeBasis(A,clear)
     if r == 0
         A = A(:,[]);
     else
-        c = E(1) / E(r);
+        c = E(1) / E(r);%条件数，最大特征值除以最小特征值
         maxCond = max(c, maxCond);
         A = U(:,1:r);
     end
     cA = maxCond;
 
     [Q, ~,~] = qr(A);
-    A = Q(:,1:rank(A));
+    A = Q(:,1:rank(A));%Q是正交矩阵，R为上三角阵
 end
     

@@ -31,22 +31,24 @@ function [Null_Basis, Minimal_Basis, Perp_Basis, Perp_Basis_sym] = ComputeBases(
     R    = cell(model.NB,1); % Holds the inerital transfer basis for each joint
     
     % Loop through one by at a time
-    for i = 1:model.NB
+    for i = 1:model.NB%第一个刚体，第i个刚体
         i_inds = parameter_inds(i); % Indicies of the inertial parameters for the body after joint i
+        %整体机构的惯性参数的索引号
         parent = model.parent(i);   
-        R{i} =  CleanMat( null(N{i}) );
+        R{i} =  CleanMat( null(N{i}) );%R{i}是N{i}矩阵的零空间,N矩阵从RPNA algorithm算法来
 
-        Minimal_Basis( i_inds , perp_inds{i} ) = M{i};
+        Minimal_Basis( i_inds , perp_inds{i} ) = M{i}; %M的元素 10*7
         
         % Undetectable inertial transfers from the child
-        Null_Basis   ( i_inds , null_inds{i} ) = R{i};
-
+        Null_Basis   ( i_inds , null_inds{i} ) = R{i};%Null_Basis（1:10，1:3）
+%       size(R{i}) = 10     3,从R构造矩阵Null_Basis
         if parent > 0
             % X transforms velocities from parent to child
             X = model.Xtree{i};
             X_sym = model.Xtree_sym{i};
             
             % transforms parameters from child to parent
+            %从子连杆到父连杆的坐标转换
             AX = Transform_Parameters(X);
             AX_sym = Transform_Parameters(X_sym);
             
@@ -54,8 +56,9 @@ function [Null_Basis, Minimal_Basis, Perp_Basis, Perp_Basis_sym] = ComputeBases(
             
             % -AX*R{i} gives the undetectable inertial transfers to the
             % parent
+            %-AX*R{i}计算不可辨识的参数undetectable inertial transfers
             Null_Basis(parent_inds, null_inds{i} )= -AX*R{i};
-            
+%             R{i}是N{i}矩阵的零空间
             % See paper for recursive derivation of the basis for the
             % orthogonal complement of the parameter nullspace
             Perp_Basis(i_inds,:)                  = AX'*Perp_Basis(parent_inds,:);

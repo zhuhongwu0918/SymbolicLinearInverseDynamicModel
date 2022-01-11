@@ -55,6 +55,7 @@ for i = 1:4
     
     a_s = dhTable_sym(i,2);
     robot.Xtree{i} = xlt([0 0 d]) * xlt([a 0 0]) * rotx(alpha);
+    %xlt空间坐标平移rotx空间坐标绕旋转(X-axis rotation)
     robot.Xtree_sym{i} = xlt([a_s 0 0]) * round(rotx(alpha));
     robot.Xtree_motor{i} = robot.Xtree{i};
     robot.Xtree_motor_sym{i} = robot.Xtree_sym{i};

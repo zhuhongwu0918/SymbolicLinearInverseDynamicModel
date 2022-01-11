@@ -8,7 +8,7 @@ function PrintParameterSummary(model, N, M, V, C, a)
         fprintf('Minimal Parameters for Body %d\n',i);
         x=0;
         for k = 1:10
-            if norm(M{i}(k,:)) > 0
+            if norm(M{i}(k,:)) > 0%M的第{1}个，如果这一行不是全为0，则属于最小参数集内，Minimal Parameters for Body 1
                 fprintf('%s\n',a{k});
                 x=x+1;
             end
@@ -20,7 +20,8 @@ function PrintParameterSummary(model, N, M, V, C, a)
         fprintf('\nIdentifiable Parmeters for Body %d\n',i);
         x=0;
         for k = 1:10
-           if IsIdentifiable(model,N,i,k)
+           if IsIdentifiable(model,N,i,k)%判断是否属于可独立辨识参数
+               %如果这N这一行有值,则不可辨识
               fprintf('%s\n',a{k});
               x=x+1;
            end
@@ -33,7 +34,7 @@ function PrintParameterSummary(model, N, M, V, C, a)
         fprintf('\nUnidentifiable Parmeters for Body %d\n',i);
         x=0;
         for k = 1:10
-           if IsUnidentifiable(model,N,i,k)
+           if IsUnidentifiable(model,N,i,k)%判断是否属于可辨识参数
               fprintf('%s\n',a{k});
               x=x+1;
            end
