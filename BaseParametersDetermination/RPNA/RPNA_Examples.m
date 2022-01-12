@@ -1,5 +1,5 @@
 clear all; clc;
-% addpaths;
+% addpaths
 
 %% Options
 % Uncomment to pick a model

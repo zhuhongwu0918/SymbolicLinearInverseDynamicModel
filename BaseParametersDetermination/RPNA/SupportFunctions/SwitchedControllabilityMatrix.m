@@ -11,6 +11,7 @@ function R = SwitchedControllabilityMatrix(A,B)
         R_new = R;
         for i = 1:length(A)%1：6
             R_new = [R_new, A{i}*R];%R是Vi_,A{i}是关节自由度的叉乘Phi×
+            %因为叉乘元素都是1，所以(Phi×)^n，的幂数此处省略了
         end
         R = RangeBasis(R_new);
     end

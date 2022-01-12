@@ -5,6 +5,8 @@ function C = OutputMatrix(L1, L2)
 % each row of C, cj, satisfies cj'*a = l1'*I*l2 for some l1, l2
 % where a and I are the paried parameter vector and matrix form of any spatial inertia
 
+% L2是关节自由度Si表达
+% L1是V矩阵，得出两个相乘
     if all( size(L1) == size(L2) )
         if norm(L1-L2,'fro') < eps
             L1 = RangeBasis(L1);
@@ -28,6 +30,7 @@ function C = OutputMatrix_NoReduce(L1, L2)
         for j = 1:size(L2,2)
             lj = L2(:,j);
             C = [C; Output_InnerProduct(li,lj)];
+            %Output_InnerProduct两个空间速度的内积
         end
     end
 end

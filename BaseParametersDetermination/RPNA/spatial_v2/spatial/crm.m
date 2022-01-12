@@ -1,4 +1,4 @@
-function  vcross = crm( v )
+function  vcross = crm( v )%叉积运算
 
 % crm  spatial/planar cross-product operator (motion).
 % crm(v)  calculates the 6x6 (or 3x3) matrix such that the expression
@@ -14,7 +14,8 @@ if length(v) == 6
 	     -v(2)  v(1)  0      0     0     0    ;
 	      0    -v(6)  v(5)   0    -v(3)  v(2) ;
 	      v(6)  0    -v(4)   v(3)  0    -v(1) ;
-	     -v(5)  v(4)  0     -v(2)  v(1)  0 ];
+	     -v(5)  v(4)  0     -v(2)  v(1)  0 ];%空间矢量的叉积形式
+     %见机器人手册，动力学，空间矢量记法，矢量积，31页右下角
 
 else
 

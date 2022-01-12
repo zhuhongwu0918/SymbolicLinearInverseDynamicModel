@@ -20,7 +20,7 @@ a2 = sym('a2',[10 1],'real');
 v1 = sym('v1',[6,1],'real');    vv1 = sym('vv1',[12,1],'real');      
 v2 = sym('v2',[6,1],'real');    vv2 = sym('vv2',[12,1],'real');
      
-X = sym('X',[6,6],'real');  % Mock spatial transform matrix
+X = sym('X',[6,6],'real');  % Mock spatial transform matrix，空间变换矩阵
 K = sym('Q',[6,6],'real');  % Mock matrix for outputs of form tr( K * I)
 d = sym('d',[10 1],'real'); % Vector of dual inertial parameters
 
@@ -37,10 +37,14 @@ C2 = jacobian(y2,[a' a2']');              % Linear relation: y2 = C2 * [a ; a2]
 matlabFunction(C2,'File','Output_InnerProduct_motor','vars', {vv1,vv2});
 
 a_dot = inertiaMatToVec(crf(v1)*I - I*crm(v1)); % Rate of change in inertia paramters when moving with v1
-A_phi = jacobian(a_dot , a);                    % Linear relation: a_dot = A_phi * a
+%对应于公式34之后的一个公式，-(v1×)'*I - I*(v1×)，I是矩阵
+A_phi = jacobian(a_dot , a);    % Linear relation: a_dot = A_phi * a
+%a_dot再对pi（惯性参数向量）求偏导
+% A_phi是一个关于速度向量v1的表达式
 matlabFunction(A_phi,'File','Rate_Parameters','vars',{v1});
 
 a_trans = inertiaMatToVec(X' * I * X); % Parameters after transformation
+%6*6矩阵转换成10*1的向量，转换后的惯量I先进行坐标转换，再对a求偏导，得到10*10
 A_X   = jacobian(a_trans, a);          % Linear relation: a_trans = A_X * a
 matlabFunction(A_X,'File','Transform_Parameters','vars',{X});
 

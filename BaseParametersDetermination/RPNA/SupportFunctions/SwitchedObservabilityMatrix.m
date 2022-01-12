@@ -8,7 +8,7 @@ function N = SwitchedObservabilityMatrix(C,A)
         AT{i} = A{i}';
     end
     
-    %Duality!
+    %Duality!AT就是Aphi, C'是Ki_
     N = SwitchedControllabilityMatrix(AT,C')';
 end
     
